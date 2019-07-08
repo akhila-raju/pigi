@@ -14,11 +14,11 @@ contract PlasmaRegistry {
   function newAggregator(address _authenticationAddress) public returns(Aggregator new_Aggregator) {
     uint id = getAggregatorCount() + 1;
     Aggregator a = new Aggregator(_authenticationAddress, id);
-    aggregators.push(address(a));
+    aggregators.push(_authenticationAddress);
     return a;
   }
 
-  // Get length of aggregators
+  // Get length of list of aggregators
   function getAggregatorCount() public returns(uint aggregatorCount) {
     return aggregators.length;
   }

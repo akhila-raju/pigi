@@ -78,55 +78,68 @@ contract Deposit {
     }
 
     /**
-     * @notice
-     * @param _amount TODO
-     * @param _initialState  TODO
+    
+        THIS WHOLE FUNCTION DOES NOT WORK
+    
+    
      */
-    function deposit(uint256 _amount, types.StateObject memory _initialState) public {
+    // /**
+    //  * @notice
+    //  * @param _amount TODO
+    //  * @param _initialState  TODO
+    //  */
+    // function deposit(uint256 _amount, types.StateObject memory _initialState) public {
         // Transfer tokens to the deposit contract
-        erc20.transferFrom(msg.sender, address(this), _amount);
+        // erc20.transferFrom(msg.sender, address(this), _amount);
         // Create the Range, StateUpdate & Checkpoint
-        types.Range memory depositRange = types.Range({start:totalDeposited, end: totalDeposited + _amount });
-        types.StateUpdate memory stateUpdate = types.StateUpdate({
-            range: depositRange, stateObject: _initialState,
-            depositAddress: address(this), plasmaBlockNumber: getLatestPlasmaBlockNumber()
-        });
-        types.Checkpoint memory checkpoint = types.Checkpoint({
-            stateUpdate: stateUpdate,
-            subrange: depositRange
-        });
+        // types.Range memory depositRange = types.Range({start:totalDeposited, end: totalDeposited + _amount });
+        // types.StateUpdate memory stateUpdate = types.StateUpdate({
+        //     range: depositRange, stateObject: _initialState,
+        //     depositAddress: address(this), plasmaBlockNumber: getLatestPlasmaBlockNumber()
+        // });
+        // types.Checkpoint memory checkpoint = types.Checkpoint({
+        //     stateUpdate: stateUpdate,
+        //     subrange: depositRange
+        // });
         // Extend depositedRanges & increment totalDeposits
-        extendDepositedRanges(_amount);
+        // extendDepositedRanges(_amount);
         // Calculate the checkpointId and add it checkpoints "pre-finalzed"
-        bytes32 checkpointId = getCheckpointId(checkpoint);
-        CheckpointStatus memory status = CheckpointStatus(
-            {challengeableUntil: block.number - 1, outstandingChallenges: 0});
-        checkpoints[checkpointId] = status;
+        // bytes32 checkpointId = getCheckpointId(checkpoint);
+        // CheckpointStatus memory status = CheckpointStatus(
+        //     {challengeableUntil: block.number - 1, outstandingChallenges: 0});
+        // checkpoints[checkpointId] = status;
         // Emit an event which informs us that the checkpoint was finalized
-        emit CheckpointFinalized(checkpointId);
-        emit LogCheckpoint(checkpoint);
-    }
+        // emit CheckpointFinalized(checkpointId);
+        // emit LogCheckpoint(checkpoint);
+    // }
 
-    function extendDepositedRanges(uint256 _amount) public {
-        uint256 oldStart = depositedRanges[totalDeposited].start;
-        uint256 oldEnd = depositedRanges[totalDeposited].end;
-        // Set the newStart for the last range
-        uint256 newStart;
-        if (oldStart == 0 && oldEnd == 0) {
-            // Case 1: We are creating a new range (this is the case when the rightmost range has been removed)
-            newStart = totalDeposited;
-        } else {
-            // Case 2: We are extending the old range (deleting the old range and making a new one with the total length)
-            delete depositedRanges[oldEnd];
-            newStart = oldStart;
-        }
-        // Set the newEnd to the totalDeposited plus how much was deposited
-        uint256 newEnd = totalDeposited + _amount;
-        // Finally create and store the range!
-        depositedRanges[newEnd] = types.Range(newStart, newEnd);
-        // Increment total deposited now that we've extended our depositedRanges
-        totalDeposited += _amount;
-    }
+
+    /**
+    
+        THIS FUNCTION DOES NOT WORK
+    
+    
+     */
+    // function extendDepositedRanges(uint256 _amount) public {
+    //     uint256 oldStart = depositedRanges[totalDeposited].start;
+    //     uint256 oldEnd = depositedRanges[totalDeposited].end;
+    //     // Set the newStart for the last range
+    //     uint256 newStart;
+    //     if (oldStart == 0 && oldEnd == 0) {
+    //         // Case 1: We are creating a new range (this is the case when the rightmost range has been removed)
+    //         newStart = totalDeposited;
+    //     } else {
+    //         // Case 2: We are extending the old range (deleting the old range and making a new one with the total length)
+    //         delete depositedRanges[oldEnd];
+    //         newStart = oldStart;
+    //     }
+    //     // Set the newEnd to the totalDeposited plus how much was deposited
+    //     uint256 newEnd = totalDeposited + _amount;
+    //     // Finally create and store the range!
+    //     depositedRanges[newEnd] = types.Range(newStart, newEnd);
+    //     // Increment total deposited now that we've extended our depositedRanges
+    //     totalDeposited += _amount;
+    // }
 
     // This function is called when an exit is finalized to "burn" it--so that checkpoints and exits 
     // on the range cannot be made.  It is equivalent to the range having never been deposited.
@@ -202,48 +215,54 @@ contract Deposit {
         emit ExitFinalized(checkpointId);
     }
 
-    function deprecateExit(types.Checkpoint memory _exit) public {
-        bytes32 checkpointId = getCheckpointId(_exit);
-        require(_exit.stateUpdate.stateObject.predicateAddress == msg.sender, "Exit must be deprecated by its predicate");
-        delete exitRedeemableAfter[checkpointId];
-    }
+    // function deprecateExit(types.Checkpoint memory _exit) public {
+    //     bytes32 checkpointId = getCheckpointId(_exit);
+    //     require(_exit.stateUpdate.stateObject.predicateAddress == msg.sender, "Exit must be deprecated by its predicate");
+    //     delete exitRedeemableAfter[checkpointId];
+    // }
 
-    function deleteOutdatedExit(types.Checkpoint memory _exit, types.Checkpoint memory _newerCheckpoint) public {
-        bytes32 outdatedExitId = getCheckpointId(_exit);
-        bytes32 newerCheckpointId = getCheckpointId(_newerCheckpoint);
-        require(intersects(_exit.subrange, _newerCheckpoint.subrange), "Exit and newer checkpoint must overlap");
-        require(_exit.stateUpdate.plasmaBlockNumber < _newerCheckpoint.stateUpdate.plasmaBlockNumber, "Exit must be before a checkpoint");
-        require(checkpointFinalized(newerCheckpointId), "Newer checkpoint must be finalized to delete an earlier exit");
-        delete exitRedeemableAfter[outdatedExitId];
-    }
+    // function deleteOutdatedExit(types.Checkpoint memory _exit, types.Checkpoint memory _newerCheckpoint) public {
+    //     bytes32 outdatedExitId = getCheckpointId(_exit);
+    //     bytes32 newerCheckpointId = getCheckpointId(_newerCheckpoint);
+    //     require(intersects(_exit.subrange, _newerCheckpoint.subrange), "Exit and newer checkpoint must overlap");
+    //     require(_exit.stateUpdate.plasmaBlockNumber < _newerCheckpoint.stateUpdate.plasmaBlockNumber, "Exit must be before a checkpoint");
+    //     require(checkpointFinalized(newerCheckpointId), "Newer checkpoint must be finalized to delete an earlier exit");
+    //     delete exitRedeemableAfter[outdatedExitId];
+    // }
 
-    function challengeCheckpoint(Challenge memory _challenge) public {
-        bytes32 challengedCheckpointId = getCheckpointId(_challenge.challengedCheckpoint);
-        bytes32 challengingCheckpointId = getCheckpointId(_challenge.challengingCheckpoint);
-        bytes32 challengeId = getChallengeId(_challenge);
-        // Verify that the challenge may be added
-        require(exitExists(challengingCheckpointId), "Challenging exit must exist");
-        require(checkpointExists(challengedCheckpointId), "Challenged checkpoint must exist");
-        require(intersects(_challenge.challengedCheckpoint.subrange, _challenge.challengingCheckpoint.subrange), "Challenge ranges must intersect");
-        require(_challenge.challengingCheckpoint.stateUpdate.plasmaBlockNumber < _challenge.challengedCheckpoint.stateUpdate.plasmaBlockNumber, "Challenging cp after challenged cp");
-        require(!challenges[challengeId], "Challenge must not already exist");
-        require(checkpoints[challengedCheckpointId].challengeableUntil > block.number, "Checkpoint must still be challengable");
-        // Add the challenge
-        checkpoints[challengedCheckpointId].outstandingChallenges += 1;
-        challenges[challengeId] = true;
-    }
+    // function challengeCheckpoint(Challenge memory _challenge) public {
+    //     bytes32 challengedCheckpointId = getCheckpointId(_challenge.challengedCheckpoint);
+    //     bytes32 challengingCheckpointId = getCheckpointId(_challenge.challengingCheckpoint);
+    //     bytes32 challengeId = getChallengeId(_challenge);
+    //     // Verify that the challenge may be added
+    //     require(exitExists(challengingCheckpointId), "Challenging exit must exist");
+    //     require(checkpointExists(challengedCheckpointId), "Challenged checkpoint must exist");
+    //     require(intersects(_challenge.challengedCheckpoint.subrange, _challenge.challengingCheckpoint.subrange), "Challenge ranges must intersect");
+    //     require(_challenge.challengingCheckpoint.stateUpdate.plasmaBlockNumber < _challenge.challengedCheckpoint.stateUpdate.plasmaBlockNumber, "Challenging cp after challenged cp");
+    //     require(!challenges[challengeId], "Challenge must not already exist");
+    //     require(checkpoints[challengedCheckpointId].challengeableUntil > block.number, "Checkpoint must still be challengable");
+    //     // Add the challenge
+    //     checkpoints[challengedCheckpointId].outstandingChallenges += 1;
+    //     challenges[challengeId] = true;
+    // }
 
-    function removeChallenge(Challenge memory _challenge) public {
-        bytes32 challengedCheckpointId = getCheckpointId(_challenge.challengedCheckpoint);
-        bytes32 challengingCheckpointId = getCheckpointId(_challenge.challengingCheckpoint);
-        bytes32 challengeId = getChallengeId(_challenge);
-        // Verify that the challenge may be added
-        require(challenges[challengeId], "Challenge must exist");
-        require(!exitExists(challengingCheckpointId), "Challenging exit must no longer exist");
-        // Remove the challenge
-        challenges[challengeId] = false;
-        checkpoints[challengedCheckpointId].outstandingChallenges -= 1;
-    }
+    /**
+    
+        THIS FUNCTION DOES NOT WORK
+    
+    
+     */
+    // function removeChallenge(Challenge memory _challenge) public {
+    //     bytes32 challengedCheckpointId = getCheckpointId(_challenge.challengedCheckpoint);
+    //     bytes32 challengingCheckpointId = getCheckpointId(_challenge.challengingCheckpoint);
+    //     bytes32 challengeId = getChallengeId(_challenge);
+    //     // Verify that the challenge may be added
+    //     require(challenges[challengeId], "Challenge must exist");
+    //     require(!exitExists(challengingCheckpointId), "Challenging exit must no longer exist");
+    //     // Remove the challenge
+    //     challenges[challengeId] = false;
+    //     checkpoints[challengedCheckpointId].outstandingChallenges -= 1;
+    // }
 
     /* 
     * Helpers
