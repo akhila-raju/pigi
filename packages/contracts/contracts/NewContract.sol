@@ -6,7 +6,7 @@ contract NewContract {
   address public authenticationAddress;
   address public commitmentChain;
   mapping(address => address) public depositContracts;
-  mapping (bytes32 => uint256)  exitRedeemableAfter;
+  mapping (bytes32 => uint256) public exitRedeemableAfter;
 
   uint public id;
   // mapping(string => string) public metadata;

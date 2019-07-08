@@ -7,7 +7,7 @@ import { Deposit } from "./Deposit.sol";
 contract EmptyContract {
   address public authenticationAddress;
   address public commitmentChain;
-  mapping(address => address) public depositContracts;
+  mapping(address => address) depositContracts;
   // mapping (bytes32 => uint256)  exitRedeemableAfter;
 
   uint public id;
