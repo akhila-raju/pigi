@@ -8,14 +8,6 @@ import {
 import * as Aggregator from '../build/Aggregator.json'
 import * as BasicTokenMock from '../build/BasicTokenMock.json'
 
-/* External Imports */
-const Web3 = require('web3')
-declare var require: any
-
-// "Web3.givenProvider" will be set in a Ethereum supported browser.
-const web3 = new Web3('http://localhost:8545')
-
-
 chai.use(solidity)
 const { expect } = chai
 
@@ -34,6 +26,7 @@ describe('Creates Aggregator and checks that fields are properly assigned', () =
       [authenticationAddress, id],
       { gasLimit: 6700000 }
     )
+    token = await deployContract(wallet, BasicTokenMock, [wallet.address, 1000])
   })
 
   it('Assigns AuthenticationAddress to Aggregator', async () => {
@@ -47,10 +40,9 @@ describe('Creates Aggregator and checks that fields are properly assigned', () =
   })
 
   it('Creates deposit contract', async () => {
-    token = await deployContract(wallet, BasicTokenMock, [wallet.address, 1000])
-    await aggregator.addDepositContract(token)
-    // console.log("hey : " + aggregator.depositContracts[0])
-    // expect(await aggregator.depositContracts[0]).to.eq(address(token))
+    // RuntimeError: VM Exception while processing transaction: revert
+    await aggregator.addDepositContract(token.address, wallet.address)
+    expect(await aggregator.depositContracts[0]).to.eq(token)
   })
 
   it('Assigns ID to Aggregator', async () => {

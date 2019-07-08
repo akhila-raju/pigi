@@ -2,5 +2,5 @@
   "sourcesPath": "./contracts",
   "targetPath": "./build",
   "npmPath": "../../node_modules",
-  "gas": 6700000
+  "gas": 8000000
 }

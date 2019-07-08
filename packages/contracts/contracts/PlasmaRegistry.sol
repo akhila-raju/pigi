@@ -11,14 +11,16 @@ contract PlasmaRegistry {
   address[] public aggregators;
 
   // Deploy a new aggregator
-  function newAggregator(address _authenticationAddress) public returns(Aggregator new_Aggregator) {
-    uint id = getAggregatorCount() + 1;
-    Aggregator a = new Aggregator(_authenticationAddress, id);
-    aggregators.push(address(a));
-    return a;
-  }
+  // function newAggregator(address _authenticationAddress) public returns(EmptyContract new_Aggregator) {
+  //   // uint id = getAggregatorCount() + 1;
+  //   // Aggregator a = new Aggregator(_authenticationAddress, 1);
+  //   EmptyContract a = new EmptyContract(_authenticationAddress, 1);
+  //   require(false == true, "false != true");
+  //   // aggregators.push(_authenticationAddress);
+  //   return a;
+  // }
 
-  // Get length of aggregators
+  // Get length of list of aggregators
   function getAggregatorCount() public returns(uint aggregatorCount) {
     return aggregators.length;
   }

@@ -72,9 +72,9 @@ contract Deposit {
      * @param _erc20 TODO
      * @param _commitmentChain TODO
      */
-    constructor(address _erc20, address _commitmentChain) public {
-        erc20 = ERC20(_erc20);
-        commitmentChain = CommitmentChain(_commitmentChain);
+    constructor(ERC20 _erc20, CommitmentChain _commitmentChain) public {
+        erc20 = _erc20;
+        commitmentChain = _commitmentChain;
     }
 
     /**

@@ -16,24 +16,22 @@ contract Aggregator {
   mapping(string => string) public metadata;
 
   constructor(address _authenticationAddress, uint _id) public {
-    authenticationAddress = _authenticationAddress;
-    commitmentChain = CommitmentChain(_authenticationAddress);
-    id = _id;
+    // authenticationAddress = _authenticationAddress;
+    // commitmentChain = CommitmentChain(_authenticationAddress);
+    // id = _id;
+    // require(false == true, "false != true");
   }
 
-  function addDepositContract(ERC20 _erc20) public returns (Deposit newDeposit) {
+  function addDepositContract(ERC20 _erc20, address _walletAddress) public returns (Deposit depositContract) {
     require(msg.sender == authenticationAddress, "addDepositContract can only be called by authenticated address.");
-    // log0("inside");
-    // log0(address(_erc20));
-    // log0(address(_erc20));
-    Deposit d = new Deposit(address(_erc20), address(commitmentChain));
-    depositContracts[address(_erc20)] = d;
-    return d;
+    Deposit depositContract = new Deposit(_erc20, commitmentChain);
+    depositContracts[_walletAddress] = depositContract;
+    return depositContract;
   }
 
-  function setMetadata(string memory _ip, string memory data) public {
+  function setMetadata(string memory _ip, string memory _data) public {
     require(msg.sender == authenticationAddress, "setMetadata can only be called by authenticated address.");
-    metadata[_ip] = data;
+    metadata[_ip] = _data;
   }
 
   function deleteMetadata(string memory _ip) public {
