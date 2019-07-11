@@ -5,7 +5,7 @@ import {
   getWallets,
   solidity,
 } from 'ethereum-waffle'
-import * as EmptyContract from '../build/EmptyContract.json'
+import * as TestContract from '../build/TestContract.json'
 
 
 chai.use(solidity)
@@ -17,7 +17,7 @@ describe.only('Creates EmptyContract and checks that fields are properly assigne
   let newContract
 
   it('it deploys ', async () => {
-    newContract = await deployContract(wallet, EmptyContract, [], {
+    newContract = await deployContract(wallet, TestContract, [], {
       gasLimit: 6700000,
     })
     await newContract.doDeploy();
